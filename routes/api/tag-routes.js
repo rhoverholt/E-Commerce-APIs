@@ -62,7 +62,7 @@ router.put('/:id', (req, res) => {
   .catch((err) => res.status(400).json(err))
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete on tag by its `id` value
   try {
     const deletedTag = await Tag.destroy({
