@@ -6,10 +6,13 @@ const { Tag, Product, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   // find all tags
   // be sure to include its associated Product data
+  console.log("Getting Tags");
   try {
     const tagData = await Tag.findAll({ include: [Product]});
+    console.log("back from DB")
     res.status(200).json(tagData);
   } catch (err) {
+    console.log("DB Error")
     res.status(500).json(err);
   }
 });
@@ -38,14 +41,37 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', (req, res) => {
   // create a new tag
+  Tag.create(req.body)
+  .then((tag) => {
+    res.status(200).json(tag);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(400).json(err);
+  });
 });
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
+  Tag.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+  .then((tag) => res.status(200).json(tag))
+  .catch((err) => res.status(400).json(err))
 });
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
+  try {
+    const deletedTag = await Tag.destroy({
+      where: { id: req.params.id }
+    })
+    res.status(200).json(deletedTag);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
